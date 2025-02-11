@@ -8,6 +8,7 @@ from petrel_client.client import Client
 import io
 import os 
 from functools import wraps
+from contextlib import contextmanager
 
 def proxy_decorator(func):
     @wraps(func)
@@ -168,6 +169,12 @@ class CephOSSClient:
 
 client = CephOSSClient("~/petreloss.conf")
 
-if __name__ == "__main__":
-    data = client.read_jsonl("s3://syj_test/test.jsonl")
-    print(data, type(data), type(data[0]))
+@contextmanager
+def add_proxy():
+    proxy_url = os.environ.get("proxy_url", "")
+    os.environ['http_proxy'] = os.environ['HTTP_PROXY'] = os.environ['https_proxy'] = os.environ['HTTPS_PROXY'] = proxy_url
+    try:
+        yield
+    finally:
+        os.environ['http_proxy'] = os.environ['HTTP_PROXY'] = os.environ['https_proxy'] = os.environ['HTTPS_PROXY'] = ''
+        

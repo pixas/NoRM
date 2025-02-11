@@ -42,10 +42,10 @@ from conversations import get_default_conv_template
 import warnings
 from transformers.models.qwen2.modeling_qwen2 import Qwen2DecoderLayer
 from train.trainer import CustomTrainer
-from utils import client
+from utils import add_proxy, client
 from peft import LoraConfig, get_peft_model, PeftModel
 
-import peft 
+
 
 IGNORE_TOKEN_ID = LabelSmoother.ignore_index
 local_rank = None
@@ -801,42 +801,42 @@ def train():
                         tokenizer=tokenizer,
                         args=training_args,
                         **data_module)
+    with add_proxy():
+        if list(pathlib.Path(training_args.output_dir).glob("checkpoint-*")):
+            trainer.train(resume_from_checkpoint=True)
+        else:
+            trainer.train()
+        trainer.save_state()
 
-    if list(pathlib.Path(training_args.output_dir).glob("checkpoint-*")):
-        trainer.train(resume_from_checkpoint=True)
-    else:
-        trainer.train()
-    trainer.save_state()
+        tokenizer.save_pretrained(training_args.output_dir)
+        model.config.use_cache = True
 
-    tokenizer.save_pretrained(training_args.output_dir)
-    model.config.use_cache = True
-
-    if training_args.lora_enable:
-        state_dict = get_peft_state_maybe_zero_3(
-            model.named_parameters(), training_args.lora_bias
-        )
-        non_lora_state_dict = get_peft_state_non_lora_maybe_zero_3(
-            model.named_parameters()
-        )
-        if training_args.local_rank == 0 or training_args.local_rank == -1:
-            model.config.save_pretrained(training_args.output_dir)
-            model.save_pretrained(training_args.output_dir, state_dict=state_dict)
-            torch.save(non_lora_state_dict, os.path.join(training_args.output_dir, 'non_lora_trainables.bin'))
-        if not os.path.exists(os.path.join(training_args.output_dir, "adapter_config.json")):
-            lora_config.save_pretrained(training_args.output_dir)
-        if not os.path.exists(os.path.join(training_args.output_dir, "tokenizer.json")):
-            tokenizer.save_pretrained(training_args.output_dir)
-    elif model_args.freeze_backbone:
-        non_lora_state_dict = get_peft_state_non_lora_maybe_zero_3(
-            model.named_parameters()
-        )
-        if training_args.local_rank == 0 or training_args.local_rank == -1:
-            model.config.save_pretrained(training_args.output_dir)
-            torch.save(non_lora_state_dict, os.path.join(training_args.output_dir, 'non_lora_trainables.bin'))
-            
-    else:
-        safe_save_model_for_hf_trainer(trainer=trainer,
-                                       output_dir=training_args.output_dir)
+        if training_args.lora_enable:
+            state_dict = get_peft_state_maybe_zero_3(
+                model.named_parameters(), training_args.lora_bias
+            )
+            non_lora_state_dict = get_peft_state_non_lora_maybe_zero_3(
+                model.named_parameters()
+            )
+            if training_args.local_rank == 0 or training_args.local_rank == -1:
+                model.config.save_pretrained(training_args.output_dir)
+                model.save_pretrained(training_args.output_dir, state_dict=state_dict)
+                torch.save(non_lora_state_dict, os.path.join(training_args.output_dir, 'non_lora_trainables.bin'))
+            if not os.path.exists(os.path.join(training_args.output_dir, "adapter_config.json")):
+                lora_config.save_pretrained(training_args.output_dir)
+            if not os.path.exists(os.path.join(training_args.output_dir, "tokenizer.json")):
+                tokenizer.save_pretrained(training_args.output_dir)
+        elif model_args.freeze_backbone:
+            non_lora_state_dict = get_peft_state_non_lora_maybe_zero_3(
+                model.named_parameters()
+            )
+            if training_args.local_rank == 0 or training_args.local_rank == -1:
+                model.config.save_pretrained(training_args.output_dir)
+                torch.save(non_lora_state_dict, os.path.join(training_args.output_dir, 'non_lora_trainables.bin'))
+                
+        else:
+            safe_save_model_for_hf_trainer(trainer=trainer,
+                                        output_dir=training_args.output_dir)
 
 
 if __name__ == "__main__":
