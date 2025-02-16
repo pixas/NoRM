@@ -1,19 +1,18 @@
-BASE_PATH=/mnt/petrelfs/jiangshuyang.p/oss
-TASK_PATH=/mnt/hwfile/medai/jiangshuyang.p/datasets
+CHECKPOINT_DIR=""
+TASK_PATH=""
 
 domains=("gsm8k_cot")
 
 MODEL_BASE="$1"
-# MODEL_BASE=/mnt/hwfile/medai/jiangshuyang.p/checkpoints/ming-moe-clinical-v2-qwen1.5-1.8b-molora-r16a32_share_expert_2_mergelora
 
-# TRAINING_DATA=ming-moe-clinical-v2
+
+
 TRAINING_DATA="$2"
 LOGS_BASE_PATH=./logs/${TRAINING_DATA}
 
-# CKPT=qwen1.5-1.8b-molora-r16a32_share_expert_2_fix
-# CKPT=qwen1.5-1.8b-molora-r16a32_share_expert_4_fix
+
 CKPT="$3"
-MODEL_PATH=${BASE_PATH}/checkpoints/${TRAINING_DATA}-${CKPT}
+MODEL_PATH=${CHEKPOINT_DIR}/${TRAINING_DATA}-${CKPT}
 
 while [ ! -f "${MODEL_PATH}/adapter_config.json" ]; do
     echo "Waiting for ${MODEL_PATH}/adapter_config.json to appear..."

@@ -8,7 +8,7 @@ The computation framework of NoRM and proposed Sim-Search method.
 </p>
 
 ## News
-🔥 [2025/01/23] Our paper is accepted by ICLR 2025!
+🔥 [2025/01/23] Our paper is accepted by ICLR 2025 as a SpotLight paper!
 * This is the repo for [FINE-TUNING WITH RESERVED MAJORITY FOR NOISE REDUCTION](https://openreview.net/pdf?id=ZV7CLf0RHK)
 
 
@@ -69,6 +69,7 @@ We use the following data format:
   "answer": "" # for evaluation dataset
 }
 ```
+Prepare a data folder `task_path`, containing the training data `.json` files and a subfolder named `norm_test`, which containing the evaluation data with `.json` suffix.
 
 
 ## Finetuning
@@ -84,7 +85,7 @@ This script automatically evaluate vanilla LoRA's performance until the training
 ```bash
 sbatch scripts/autoselect.sh
 ```
-If using local machines, run the following command:
+If using local machines, run the following command under a CUDA environment:
 ```bash
 python evaluation/auto_select.py \
   --model_base $MODEL_BASE \
@@ -110,9 +111,9 @@ sbatch scripts/eval/slurm/eval_parallel_peft_batch_autoselect.sh $TASK_PATH $MOD
 ```
 where
 `domain`: the evaluation dataset's name in your local folder
-`LOGS_BASE_PATH`: the log file base path, default to `./logs/training_data_name/`
+`LOGS_BASE_PATH`: the log file base path, default to `./logs/${training_data}/`
 
-Check the file `./logs/training_data_name/${CKPT}-automerge-${SAVE_NAME}/$domain/eval.log` for evaluation results.
+Check the file `./logs/${training_data}/${CKPT}-automerge-${SAVE_NAME}/$domain/eval.log` for evaluation results.
 
 
 # Citation

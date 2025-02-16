@@ -1,16 +1,25 @@
-BASE_PATH=/mnt/petrelfs/jiangshuyang.p/oss
-# TASK_PATH=s3://syj_test/datasets/diverse_domain/train_wo_triviaqa
-TASK_PATH=/mnt/hwfile/medai/jiangshuyang.p/datasets/taia_train
+CHECKPOINT_DIR="" # the checkpoint directory in the local machine
 
-TRAINING_DATA=tulu_v2_0_3
+TASK_PATH="" # the path to the task data
 
-
-MODEL_BASE=/mnt/petrelfs/jiangshuyang.p/models/Meta-Llama-3-8B-Instruct
-
-CKPT=test_new_env
+TRAINING_DATA=metamathqa  # ${TASK_PATH}/${TRAINING_DATA}.json should exist
 
 
-SAVE_PATH=${BASE_PATH}/checkpoints/${TRAINING_DATA}-${CKPT}
+MODEL_BASE="" # the base model path, must be Llama3-8B Instruct, Qwen 2-7B Instruct, or Mistral 7B Instruct
+
+CKPT=llama3-8b-exp # as we set the prompt_type based on the CKPT, we need to set it following the below rule
+# if [[ $CKPT == *"llama2-7b"* ]]; then
+#     prompt_type="llama2"
+# elif [[ $CKPT == *"llama3-8b"* ]]; then
+#     prompt_type="llama3"
+# elif [[ $CKPT == *"mistral-7b"* ]]; then 
+#     prompt_type="mistral"
+# else
+#     prompt_type="qwen"
+# fi
+
+
+SAVE_PATH=${CHEKPOINT_DIR}/${TRAINING_DATA}-${CKPT}
 LOGS_BASE_PATH=logs/${TRAINING_DATA}
 LORA_NAME_OR_PATH=None
 
@@ -20,4 +29,4 @@ if [ ! -f "${SAVE_PATH}/adapter_config.json" ]; then
     sbatch -o ${LOGS_BASE_PATH}/${CKPT}/train.log scripts/train/slurm/sft_lora.sh $TASK_PATH $TRAINING_DATA $MODEL_BASE $SAVE_PATH $CKPT $LORA_NAME_OR_PATH & sleep 1
 fi
 
-# bash scripts/eval/bash/eval_models_per_dataset.sh $MODEL_BASE $TRAINING_DATA $CKPT
+bash scripts/eval/bash/eval_models_per_dataset.sh $MODEL_BASE $TRAINING_DATA $CKPT
