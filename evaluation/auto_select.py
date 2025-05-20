@@ -9,10 +9,7 @@ from tqdm import tqdm
 
 import transformers
 from transformers import AutoModel, AutoTokenizer, AutoModelForCausalLM
-from transformers.models.qwen2.modeling_qwen2 import Qwen2ForCausalLM
-from transformers.models.llama.modeling_llama import LlamaForCausalLM
-from model.builder import load_molora_pretrained_model
-from utils import disable_torch_init, get_model_name_from_path
+
 
 from peft import LoraConfig, get_peft_model
 
@@ -346,7 +343,7 @@ def my_convert(x, y, dim, base_weight, step, save_name, range_start=5):
 
 
 def convert_to_automodel(model_path, model_base, load_8bit=False, load_4bit=False, use_logit_bias=False, device_map="auto", device="cuda", save_name=None, step=0.1, add_module=False, select_method='lora', range_start=5):
-    disable_torch_init()
+    # disable_torch_init()
     # assert model_path contains adapter_model.bin and non_lora_trainables.bin two files
     # model_name = get_model_name_from_path(model_path)
     base_model = AutoModelForCausalLM.from_pretrained(model_base)
