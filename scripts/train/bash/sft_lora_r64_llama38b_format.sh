@@ -21,7 +21,7 @@ CKPT=llama3-8b-exp # as we set the prompt_type based on the CKPT, we need to set
 
 SAVE_PATH=${CHEKPOINT_DIR}/${TRAINING_DATA}-${CKPT}
 LOGS_BASE_PATH=logs/${TRAINING_DATA}
-LORA_NAME_OR_PATH=None
+LORA_NAME_OR_PATH=None  # can reproduce continual lora experiments, which is the previous task's lora path
 
 mkdir -p ${LOGS_BASE_PATH}
 mkdir -p ${LOGS_BASE_PATH}/${CKPT}
