@@ -35,5 +35,5 @@ logs
 run_script.sh
 phoenix*
 batchscript*
-slurm*
+slurm-*
 images
