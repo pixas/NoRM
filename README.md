@@ -86,7 +86,7 @@ This script automatically evaluate vanilla LoRA's performance until the training
 sbatch scripts/autoselect.sh
 ```
 If using local machines, run the following command under a CUDA environment:
-```bash
+```bashf
 python evaluation/auto_select.py \
   --model_base $MODEL_BASE \
   --model_path $MODEL_PATH \

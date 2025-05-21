@@ -19,6 +19,7 @@ LOGS_BASE_PATH="$5"
 DATASET="$6"
 
 DATA_PATH=${TASK_PATH}/norm_test
+
 mkdir -p ${LOGS_BASE_PATH}/${CKPT}/${DATASET}
 if [[ $CKPT == *"llama2-7b"* ]]; then
     conv_mode="llama2"

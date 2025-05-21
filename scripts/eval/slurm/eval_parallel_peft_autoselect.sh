@@ -18,7 +18,7 @@ CKPT="$4"
 LOGS_BASE_PATH="$5"
 DATASET="$6"
 NEW_LORA_NAME="$7"
-DATA_PATH=${TASK_PATH}/taia_test
+DATA_PATH=${TASK_PATH}/norm_test
 
 
 name=$NEW_LORA_NAME
