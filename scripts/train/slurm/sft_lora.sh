@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -J sft
-#SBATCH --partition=medai_llm
+#SBATCH --partition=partion_name
 #SBATCH -N1
 #SBATCH --quotatype=spot
 #SBATCH --gres=gpu:2 
